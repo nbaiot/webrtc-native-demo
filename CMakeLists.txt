@@ -19,3 +19,4 @@ set(CMAKE_BUILD_TYPE Release)
 add_subdirectory(webrtc)
 
 add_subdirectory(01_hello_rtc)
+add_subdirectory(02_rtc_thread)
