@@ -67,10 +67,11 @@ int main() {
     return -1;
   }
 
-  // adm->RegisterAudioCallback();
+  RTC_LOG(LS_INFO) << ">>>>> start recording";
   adm->StartRecording();
-
   rtc::Thread::SleepMs(5000);
-  RTC_LOG(LS_INFO) << "hello rtc";
+  adm->StopRecording();
+  RTC_LOG(LS_INFO) << ">>>>> stop recording";
+
   return 0;
 }
