@@ -90,17 +90,25 @@ int main(int argc, char* argv[]) {
   rtc::LogMessage::LogThreads(true);
   rtc::LogMessage::LogTimestamps(true);
 
-  if (argc != 2) {
+  if (argc < 2 || argc > 3) {
     RTC_LOG(LS_ERROR) << "usage: stunserver address";
     return -1;
   }
+  std::vector<rtc::SocketAddress> server_addresses;
   rtc::SocketAddress server_addr;
   if (!server_addr.FromString(argv[1])) {
     RTC_LOG(LS_ERROR) << "Unable to parse IP address: " << argv[1];
     return -1;
   }
-  std::vector<rtc::SocketAddress> server_addresses;
   server_addresses.push_back(server_addr);
+  if (argc == 3) {
+    rtc::SocketAddress server_addr2;
+    if (!server_addr2.FromString(argv[2])) {
+      RTC_LOG(LS_ERROR) << "Unable to parse IP address: " << argv[1];
+      return -1;
+    }
+    server_addresses.push_back(server_addr2);
+  }
 
   if (!rtc::InitializeSSL()) {
     RTC_LOG(LS_ERROR) << "init ssl failed";
@@ -143,7 +151,7 @@ int main(int argc, char* argv[]) {
   auto stun_prober = std::make_unique<stunprober::StunProber>(
       packet_socket_factory.get(), net_thread.get(), networks);
 
-  stun_prober->Start(server_addresses, false, 10, 2, 1000,
+  stun_prober->Start(server_addresses, true, 10, 2, 1000,
                      [](stunprober::StunProber* prober, int result) {
                        StopTrial(prober, result);
                      });
